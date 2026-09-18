@@ -54,12 +54,15 @@
   p{margin:0 0 15px}
   p:last-child{margin-bottom:0}
   a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px}
-  .lede{font-size:19px;line-height:1.55;margin-bottom:26px}
+  .lede{font-size:19px;line-height:1.55;margin-bottom:14px}
+  .lede:last-of-type{margin-bottom:26px}
   .eyebrow{
     font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;
     color:var(--faint);margin:0 0 10px;
   }
+  .eyebrow.mid{margin-top:30px}
   .rule{height:1px;background:var(--rule);border:0;margin:34px 0}
+  .shared{font-size:13px;color:var(--muted);margin:0}
 
   input[type=text]{
     width:100%;padding:14px 16px;font:inherit;font-size:18px;color:var(--ink);
@@ -141,6 +144,8 @@
     font-size:15px;line-height:1.45;
   }
   .recap div:last-child{border-bottom:1px solid var(--rule)}
+  .recap .sub{display:block;font-size:13px;color:var(--muted);margin-top:3px}
+  .recap .lead{font-weight:600}
   .recap b{
     flex:0 0 132px;font-weight:600;font-size:11px;letter-spacing:0.13em;
     text-transform:uppercase;color:var(--faint);padding-top:3px;
@@ -151,6 +156,10 @@
   }
   .applied{
     margin-top:18px;padding-top:14px;border-top:1px solid var(--rule);
+  }
+  .applied.lead{
+    margin:0 0 20px;padding:0 0 16px;
+    border-top:0;border-bottom:1px solid var(--rule);
   }
   .applied span{
     display:block;font-size:11px;font-weight:600;letter-spacing:0.16em;
@@ -184,14 +193,27 @@
 
 <section id="s-ask">
   <h1>Ask the <i>I Ching</i></h1>
-  <p class="lede">The <I>I Ching (Book of Changes)</I> is a Chinese divination manual roughly three thousand years old. You focus on a question, toss coins to build a six-line figure called a <I>hexagram</I>, and the <I>I Ching</I> offers a reading, along with any aspects that are in flux.<P></P>The aim the <I>I Ching</I> is to empower your intuition and get a fresh angle on something you've been pondering. Instead of thinking of it as fortune-telling, use it to unblock thinking, much as you might use Brian Eno’s <I><a href="https://enoshop.co.uk/products/oblique-strategies?variant=51221629501780" target="_blank" rel="noopener">Oblique Strategies</A></I>. </p>
+  <p class="lede">The <i>I Ching (Book of Changes)</i> is a Chinese divination manual roughly
+  three thousand years old. You focus on a question, toss coins to build a six-line figure called
+  a <i>hexagram</i>, and the <i>I Ching</i> offers a reading, along with any aspects that are in
+  flux.</p>
+
+  <p class="lede">The aim of the <i>I Ching</i> is to empower your intuition and get a fresh
+  angle on something you&rsquo;ve been pondering. Instead of thinking of it as fortune-telling,
+  use it to unblock thinking, much as you might use Brian Eno&rsquo;s
+  <i><a href="https://enoshop.co.uk/products/oblique-strategies?variant=51221629501780"
+  target="_blank" rel="noopener">Oblique Strategies</a></i>.</p>
 
   <label for="q" class="eyebrow">Your question</label>
   <input id="q" type="text" autocomplete="off" spellcheck="true"
          placeholder="Should I ... ?">
-<p class="hint">
-  The <em>I Ching</em> responds best to a specific situation: pose a yes-or-no question or decision that’s been weighing on you, rather than asking how your year will go or whether you’ll be rich.</p><p class="hint">Don’t be a dope and use this page for a mental health crisis or decisions affecting your safety or the safety of others.</p><p class="hint">Nothing on this page is saved or sent anywhere. The throws happen in your browser, and the question you enter isn’t collected or stored.
-</p>
+  <p class="hint">The <i>I Ching</i> responds best to a specific situation: pose a yes-or-no
+  question or decision that&rsquo;s been weighing on you, rather than asking how your year will
+  go or whether you&rsquo;ll be rich.</p>
+  <p class="hint">Don&rsquo;t be a dope and use this page for a mental health crisis, or for
+  decisions affecting your safety or the safety of others.</p>
+  <p class="hint">Nothing on this page is saved or sent anywhere. The throws happen in your
+  browser, and the question you enter isn&rsquo;t collected or stored.</p>
   <div class="row">
     <button class="btn solid" id="go">Continue</button>
   </div>
@@ -199,8 +221,8 @@
   <details>
     <summary>How the coins work, if you want to know first</summary>
     <div class="body">
-      <p>You need three coins. Throw all three at once and note what comes
-      up, which gives you one line of the figure, building from the bottom up. Do that six times.</p>
+      <p>You need three coins. Throw all three at once and note what comes up, which gives you
+      one line of the figure, building from the bottom up. Do that six times.</p>
       <p>The mix of heads and tails decides the line. Three of a kind produces a changing
       line, either Changing Unbroken Yang or Changing Broken Yin, while a mixed throw
       produces a static one, Static Unbroken Yang or Static Broken Yin. The static lines
@@ -262,6 +284,7 @@
 </section>
 
 <section id="s-read" class="hide">
+  <p class="hint hide" id="shared-note">Somebody shared this reading with you. The question and the six throws travelled in the link; nothing was looked up. To throw your own coins, <a href="#" id="shared-restart">start again</a>.</p>
   <div id="cards"></div>
   <div class="row" id="more-row">
     <button class="btn solid" id="more">Continue</button>
@@ -511,9 +534,10 @@ var VERDICT = {
   "not yet": "Not yet"
 };
 
-function applied(txt){
+function applied(txt, lead){
   if (!txt) return "";
-  return '<p class="applied"><span>How this applies to your question:</span> ' + esc(txt) + "</p>";
+  return '<p class="applied' + (lead ? " lead" : "") +
+         '"><span>How this applies to your question</span> ' + esc(txt) + "</p>";
 }
 
 function traditional(h, n){
@@ -542,35 +566,63 @@ function buildReading(){
 
   var c = [];
   var steps = P.summary_steps || [P.summary];
+  var lt = TRI[PM.lower];
+  var ut = TRI[PM.upper];
+
+  /* The recap is the one place the whole reading has to be legible at a glance, so every
+     row names the thing plainly and carries a short gloss saying what that row is for. */
+  var rows = [
+    ["Your answer", '<span class="lead">' + esc(VERDICT[P.lean] || "It depends") + "</span>",
+     "the direction this hexagram has traditionally been read as pointing"],
+    ["The figure", "Hexagram " + pn + " · " + esc(P.title),
+     esc(ut.en) + " above, " + esc(lt.en) + " below"],
+    ["Inside", esc(P.lower_gist || lt.en.toLowerCase()),
+     "what is already under way, and what you privately know"],
+    ["Outside", esc(P.upper_gist || ut.en.toLowerCase()),
+     "what others can see, and the conditions you did not set"],
+    ["Changing lines", changing.length
+      ? changing.map(function(pos){
+          return "line " + pos + " · " + esc(P.lines[pos - 1].gist);
+        }).join("<br>")
+      : "none — the picture is settled",
+     changing.length ? "the parts of the situation already turning into something else" : ""]
+  ];
+  if (changing.length && rn !== pn){
+    rows.push(["Heading toward", "Hexagram " + rn + " · " + esc(HEX[rn].title),
+      "the shape this takes once those changes have worked through"]);
+  }
+
+  function recapHtml(){
+    return '<div class="recap">' + rows.map(function(r){
+      return "<div><b>" + r[0] + "</b><span>" + r[1] +
+             (r[2] ? '<span class="sub">' + r[2] + "</span>" : "") + "</span></div>";
+    }).join("") + "</div>";
+  }
+
+  S.verdict = VERDICT[P.lean] || "It depends";
+  S.hexLabel = "hexagram " + pn + ", " + P.title;
 
   /* The figure and what it pictures, then what that has been taken to mean, then what it
      says about the question. One paragraph per press. */
   c.push(
     '<p class="eyebrow">Your hexagram</p>' +
     hexBlock(pn, false) +
-    "<p>" + esc(steps[0]) + "</p>"
+    "<p>" + esc(steps[0]) + "</p>" +
+    (steps[1]
+      ? '<p class="eyebrow mid">What it means</p>' +
+        "<p>" + esc(steps[1]) + "</p>" +
+        traditional(P, pn)
+      : "") +
+    '<p class="eyebrow mid">In short</p>' +
+    recapHtml()
   );
 
-  if (steps[1]){
-    c.push(
-      '<p class="eyebrow">What it means</p>' +
-      "<p>" + esc(steps[1]) + "</p>" +
-      traditional(P, pn)
-    );
-  }
-
-  if (steps[2]){
-    c.push(
-      '<p class="eyebrow">What it says about your question</p>' +
-      "<p>" + esc(steps[2]) + "</p>"
-    );
-  }
-
   c.push(
-    '<p class="eyebrow">You asked</p>' +
+    '<p class="eyebrow">What it says about your question. You asked</p>' +
     '<p class="asked">' + esc(S.question) + "</p>" +
     '<p class="verdict">' + esc(VERDICT[P.lean] || "It depends") + ".</p>" +
     "<p>" + esc(P.lean_note) + "</p>" +
+    (steps[2] ? "<p>" + esc(steps[2]) + "</p>" : "") +
     '<p class="hint">The <i>I Ching</i> doesn’t directly answer yes or no. The hexagram ' +
     "describes a situation which is then interpreted, and the heading above is a one-word " +
     "summary of the direction this particular one has traditionally been read as pointing.</p>" +
@@ -581,38 +633,41 @@ function buildReading(){
     "against rather than an answer to accept.</p>"
   );
 
-  var lt = TRI[PM.lower];
+  c.push(
+    '<p class="eyebrow">The trigrams</p>' +
+    "<p>The six lines are read as two halves of three called trigrams, and each trigram has a " +
+    "name and a picture of its own. The lower half describes the inside of the situation: what " +
+    "is already under way, what you privately know, the ground the matter stands on.</p>"
+  );
+
   c.push(
     '<p class="eyebrow">The bottom half</p>' +
     '<div class="halfhead"><span class="tg">' + lt.glyph + "</span>" +
       '<span><span class="tn">' + esc(PM.lower) + " · " + esc(lt.en) + "</span>" +
       '<span class="ts">lines one, two and three, counting up from the bottom</span></span></div>' +
-    "<p>The six lines are read as two halves of three called trigrams, and each trigram has a " +
-    "name and a picture of its own. The lower half describes the inside of the situation: what " +
-    "is already under way, what you privately know, the ground the matter stands on.</p>" +
+    applied(P.lower_applied, true) +
     "<p>In this hexagram, the bottom three lines are " + esc(lt.form) + ". " +
     esc(lt.stands) + "</p>" +
-    "<p>" + esc(P.lower_note) + "</p>" +
-    applied(P.lower_applied)
+    "<p>" + esc(P.lower_note) + "</p>"
   );
 
-  var ut = TRI[PM.upper];
   c.push(
     '<p class="eyebrow">The top half</p>' +
     '<div class="halfhead"><span class="tg">' + ut.glyph + "</span>" +
       '<span><span class="tn">' + esc(PM.upper) + " · " + esc(ut.en) + "</span>" +
       '<span class="ts">lines four, five and six</span></span></div>' +
+    applied(P.upper_applied, true) +
     "<p>The upper half describes the outside: what other people can see, what is still arriving, " +
     "and the conditions you are working under rather than the ones you set.</p>" +
     "<p>In this hexagram, the top three lines are " + esc(ut.form) + ". " +
     esc(ut.stands) + "</p>" +
-    "<p>" + esc(P.upper_note) + "</p>" +
-    applied(P.upper_applied)
+    "<p>" + esc(P.upper_note) + "</p>"
   );
 
   c.push(
     '<p class="eyebrow">The two halves together</p>' +
     "<h2>" + esc(ut.en) + " above, " + esc(lt.en) + " below</h2>" +
+    applied(P.together_applied, true) +
     "<p>" + esc(P.together) + "</p>"
   );
 
@@ -673,28 +728,19 @@ function buildReading(){
     );
   }
 
-  var rows = [
-    ["Main hexagram", esc(ut.en) + " above, " + esc(lt.en) + " below"],
-    ["Inside", esc(P.lower_gist || lt.en.toLowerCase())],
-    ["Outside", esc(P.upper_gist || ut.en.toLowerCase())],
-    ["Changing lines", changing.length
-      ? changing.map(function(pos){ return "line " + pos + ", " + esc(P.lines[pos - 1].gist); }).join("; ")
-      : "none"]
-  ];
-  if (changing.length && rn !== pn){
-    rows.push(["Heading toward", "hexagram " + rn + ", " + esc(HEX[rn].title)]);
-  }
-
   c.push(
-    '<p class="eyebrow">In short</p>' +
+    '<p class="eyebrow">That is the reading</p>' +
     "<h2>" + esc(P.title) + "</h2>" +
-    '<div class="recap">' +
-      rows.map(function(r){ return "<div><b>" + r[0] + "</b><span>" + r[1] + "</span></div>"; }).join("") +
-    "</div>" +
+    '<p class="eyebrow mid">In short</p>' +
+    recapHtml() +
     '<p class="hint">Asking the same question again in the hope of a better answer is ' +
     "traditionally discouraged. When an answer seems wrong, the usual advice is to look at whether " +
     "the question was the one you actually wanted answered.</p>" +
-    '<div class="row"><button class="btn" id="again">Ask something else</button></div>'
+    '<div class="row">' +
+      '<button class="btn" id="again">Ask something else</button>' +
+      '<button class="btn" id="share">Share</button>' +
+      '<span class="shared hide" id="share-note"></span>' +
+    "</div>"
   );
 
   S.cards = c;
@@ -715,9 +761,84 @@ function revealNext(){
   if (S.shown > 1) d.scrollIntoView({ behavior: "smooth", block: "start" });
   var again = $("again");
   if (again) again.addEventListener("click", function(){ location.reload(); });
+  var share = $("share");
+  if (share) share.addEventListener("click", doShare);
+}
+
+function encodeReading(){
+  var q = "";
+  try { q = btoa(unescape(encodeURIComponent(S.question))).replace(/=+$/, ""); }
+  catch (e) { q = ""; }
+  return "#r=" + S.values.join("") + "." + q;
+}
+
+function decodeReading(hash){
+  var m = /^#r=([6789]{6})\.([A-Za-z0-9+/]*)$/.exec(hash || "");
+  if (!m) return null;
+  var q = "";
+  try {
+    var b = m[2];
+    while (b.length % 4) b += "=";
+    q = b ? decodeURIComponent(escape(atob(b))) : "";
+  } catch (e) { return null; }
+  return { values: m[1].split("").map(Number), question: q };
+}
+
+function shareText(){
+  return [
+    "I asked the I Ching: “" + S.question + "”",
+    S.verdict + ". The coins gave " + S.hexLabel + ".",
+    location.href.split("#")[0] + encodeReading()
+  ].join("\n");
+}
+
+function shareNote(msg){
+  var n = $("share-note");
+  if (!n) return;
+  n.textContent = msg;
+  n.classList.remove("hide");
+  setTimeout(function(){ n.classList.add("hide"); }, 3000);
+}
+
+function doShare(){
+  var txt = shareText();
+  if (navigator.share){
+    navigator.share({ title: "Ask the I Ching", text: txt }).catch(function(){});
+    return;
+  }
+  if (history.replaceState) history.replaceState(null, "", encodeReading());
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(
+      function(){ shareNote("Link copied to the clipboard."); },
+      function(){ shareNote("Could not copy — select the text above instead."); }
+    );
+    return;
+  }
+  shareNote("Could not copy — select the text above instead.");
 }
 
 $("more").addEventListener("click", revealNext);
+
+/* A shared link carries the question and the six throws in the hash, so the reading it
+   opens on is the same one the sender got. Nothing is fetched; the hash IS the reading. */
+(function openShared(){
+  var r = decodeReading(location.hash);
+  if (!r) return;
+  S.question = r.question;
+  S.values = r.values;
+  S.mode = "shared";
+  $("asked-1").textContent = r.question;
+  $("asked-2").textContent = r.question;
+  show("s-ask", false);
+  show("s-method", false);
+  show("shared-note", true);
+  $("shared-restart").addEventListener("click", function(e){
+    e.preventDefault();
+    location.href = location.href.split("#")[0];
+    location.reload();
+  });
+  buildReading();
+})();
 </script>
 </body>
 </html>
